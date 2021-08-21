@@ -19,6 +19,7 @@ from keras.models import load_model
 import scipy.io as io
 from keras.models import Model
 import cv2
+from tqdm import tqdm
 
 def getdata(path):
     testdata = []
@@ -38,9 +39,11 @@ if __name__ == "__main__":
     model = getANNmodel()
     model.load_weights('../result_dir/fft_lineartrans_resdir/checkpoint')
     model.compile(optimizer=Adam(lr=cfg.TRAIN.lr), loss=cfg.TRAIN.loss)
-    test_list = np.loadtxt("../data/train.txt",dtype=str)
-    test_list += np.loadtxt("../data/validation.txt",dtype=str)
+    test_list = list(np.loadtxt("../data/train.txt",dtype=str))
+    test_list += list(np.loadtxt("../data/validation.txt",dtype=str))
     print(f"data sample number:{len(test_list)}")
     test_generator = test_data_generator(test_list,batch_size = 100)
-    pre_res = model.predict_generator(test_generator,steps = int(len(test_list)/100))
-    print(pre_res.shape)
+    pre_res = model.predict_generator(test_generator,steps = int(len(test_list)/100),verbose=1)
+    for i in tqdm(range(50000)):
+        temp_lr_data = pre_res[i].reshape(92,92,1)
+        np.save(f"../data/generate_fft_data/lrdata/{i}.npy",temp_lr_data)
