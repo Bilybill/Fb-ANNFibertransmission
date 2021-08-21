@@ -3,6 +3,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(BASE_DIR)
 sys.path.append(os.path.join(BASE_DIR, '../'))
 from cfgs.config import cfg
+import keras
 import numpy as np
 
 from keras.layers import (Input, Reshape, Dense)
@@ -32,6 +33,7 @@ def getANNmodel(version = None):
         # l = Lambda(lambda x: 2*x-1,name='output')(l)
     else:
         raise ValueError("unkonwn type")
+    
     out_layer = l
     model = Model(inputs=input_img, outputs=[out_layer])
     return model

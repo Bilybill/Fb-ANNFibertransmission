@@ -15,6 +15,7 @@ __C.root_result_dir = '../result_dir/trainlog/%s_train' % __C.version_name
 
 __C.MODEL = edict()
 __C.MODEL.mid_dim = []
+__C.MODEL.ischanged = True
 
 # general training and testing config
 __C.TRAIN = edict()
