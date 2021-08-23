@@ -36,6 +36,11 @@ __C.TRAIN.checkpoint_path = '../result_dir/%s_resdir/checkpoint' % __C.version_n
 __C.TRAIN.loss = 'mse'
 __C.TRAIN.fftdata_load = '../data/trainfft_data.npy'
 __C.TRAIN.use_train_to_test = True
+# __C TRAIN RDN network settings
+__C.TRAINRDN = edict()
+__C.TRAINRDN.checkpoint_dir = '../result_dir/rdn_res'
+__C.TRAINRDN.batch_size = 16
+__C.TRAINRDN.epochs = 1000
 
 __C.TEST = edict()
 __C.TESTALL = True

@@ -11,6 +11,7 @@ from keras.utils import plot_model
 from keras.layers import Input,MaxPool2D,Deconvolution2D ,Convolution2D , Add, Dense , AveragePooling2D , UpSampling2D , Reshape , Flatten , Subtract , Concatenate
 from keras.models import Model
 from keras.optimizers import Adam
+from keras.utils import multi_gpu_model
 import numpy as np
 import tensorflow as tf
 
@@ -66,7 +67,7 @@ class RDN:
     def get_model(self):
         return self.model
     
-    def __init__(self , channel = 3 , lr=0.0001 , patch_size=92 , RDB_count=20, load_weights = None, if_compile = True):
+    def __init__(self , channel = 1 , lr=0.0001 , patch_size=92 , RDB_count=20, load_weights = None, if_compile = True, multi_gpu = True):
         self.channel_axis = 3
         inp = Input(shape = (patch_size , patch_size , channel))
 
@@ -93,19 +94,16 @@ class RDN:
         # if scale >= 8:
         #     output = Subpixel(64, (3,3), r = 2,padding='same',activation='relu')(output)
         
-        output = Convolution2D(filters =3 , kernel_size=(3,3) , strides=(1 , 1) , padding='same')(output)
+        output = Convolution2D(filters = channel , kernel_size=(3,3) , strides=(1 , 1) , padding='same' , name = 'output')(output)
 
         model = Model(inputs=inp , outputs = output)
         if if_compile:
-            adam = Adam(lr=lr, beta_1=0.9, beta_2=0.999, epsilon=None, decay=lr/2, amsgrad=False)
-            
+            adam = Adam(lr=lr, beta_1=0.9, beta_2=0.999, decay=lr/2, amsgrad=False)
             ## multi gpu setting
-            
-            #if gpu < 0:
-                #model = multi_gpu_model(model, gpus=2)
+            if multi_gpu:
+                model = multi_gpu_model(model, gpus=2)
             ## Modification of adding PSNR as a loss factor
-            model.compile(loss=self.L1_loss, optimizer=adam , metrics=[PSNRLoss,SSIM])
-        
+            model.compile(loss=keras.losses.MeanAbsoluteError(), optimizer=adam , metrics=[PSNRLoss,SSIM])
         if load_weights is not None:
             print("loading existing weights !!!")
             model.load_weights(load_weights)

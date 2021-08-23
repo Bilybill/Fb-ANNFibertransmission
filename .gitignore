@@ -144,7 +144,7 @@ cython_debug/
 #vscodedir
 .vscode/
 .idea/
-result_dir/
+./result_dir/
 *.tif
 *.mat
 *.png
