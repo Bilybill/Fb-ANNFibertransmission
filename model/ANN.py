@@ -11,6 +11,7 @@ from keras.models import Model
 from keras.layers import Lambda
 from ComplexNets import *
 from keras.utils import plot_model
+import tensorflow as tf
 
 
 def getANNmodel(version = None):
@@ -18,8 +19,14 @@ def getANNmodel(version = None):
     orig_dim = cfg.image_dim if cfg.version_name == 'inverse_genspc' else cfg.orig_dim
     input_img = Input(shape=(image_dim*image_dim, 2))     #input is complex number
     l = input_img
+    
     l = ComplexDense(orig_dim*orig_dim, use_bias=False, kernel_regularizer=regularizers.l2(cfg.lamb))(l)
-    l = Amplitude()(l)
+    if cfg.version_name == "fft_with_fft":
+        l = Reshape((-1,orig_dim,orig_dim))(l)
+        l = Lambda(lambda x: tf.signal.ifft2d(x),name='output')(l)
+        l = Amplitude()
+    else:
+        l = Amplitude()(l)
     if version is not None:
         cfg.version_name = version
     if cfg.version_name == 'fft':
@@ -31,9 +38,11 @@ def getANNmodel(version = None):
     elif cfg.version_name == 'fft_lineartrans':
         l = Lambda(lambda x: 2*keras.activations.sigmoid(x)-1,name='output')(l)
         # l = Lambda(lambda x: 2*x-1,name='output')(l)
+    elif cfg.version_name == 'fft_with_fft':
+        pass
     else:
         raise ValueError("unkonwn type")
-    
+
     out_layer = l
     model = Model(inputs=input_img, outputs=[out_layer])
     return model

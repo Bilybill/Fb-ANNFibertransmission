@@ -5,7 +5,7 @@ __C = edict()
 cfg = __C
 
 # 0. basic config
-__C.version_name = 'fft_lineartrans'
+__C.version_name = 'fft_with_fft'
 __C.image_dim = 120 if __C.version_name != 'inverse_genspc' else 92
 __C.orig_dim = 92 if __C.version_name != 'inverse_genspc' else 120
 __C.lamb = 0.1
@@ -24,7 +24,7 @@ __C.TRAIN.usegenerator = True
 __C.TRAIN.x_toload = 'Training/Speckle_images/ImageNet' if __C.version_name != 'inverse_genspc' else 'Training/Original_images/ImageNet'
 __C.TRAIN.y_toload = 'Training/Original_images/ImageNet' if __C.version_name != 'inverse_genspc' else 'Training/Speckle_images/ImageNet'
 __C.TRAIN.one_minimize = True if __C.version_name == 'inverse_genspc' else False
-__C.TRAIN.loadweights = True
+__C.TRAIN.loadweights = False
 # __C.TRAIN.load_path = '../result_dir/%s_resdir/checkpoint' % __C.version_name
 __C.TRAIN.load_path = '../result_dir/fft_resdir/bestcheckpoint'
 
