@@ -3,7 +3,7 @@ import _init_path
 from RDN import RDN
 import numpy as np
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '0,1'
+os.environ['CUDA_VISIBLE_DEVICES'] = '2,3'
 from os import path as osp
 from cfgs.config import cfg
 import pickle
