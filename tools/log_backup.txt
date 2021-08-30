@@ -1,0 +1,57 @@
+2021-08-30 15:02:16,838  WARNING  From /home/wangyh/anaconda3/envs/keras/lib/python3.6/site-packages/tensorflow_core/python/ops/resource_variable_ops.py:1630: calling BaseResourceVariable.__init__ (from tensorflow.python.ops.resource_variable_ops) with constraint is deprecated and will be removed in a future version.
+Instructions for updating:
+If using Keras pass *_constraint arguments to layers.
+2021-08-30 15:02:16,858  WARNING  From /home/wangyh/guangxianchengxiang/data/dataset/data/Data_751/tools/../model/ComplexNets.py:21: The name tf.real is deprecated. Please use tf.math.real instead.
+
+2021-08-30 15:02:16,859  WARNING  From /home/wangyh/guangxianchengxiang/data/dataset/data/Data_751/tools/../model/ComplexNets.py:22: The name tf.imag is deprecated. Please use tf.math.imag instead.
+
+2021-08-30 15:06:33,285  WARNING  From /home/wangyh/anaconda3/envs/keras/lib/python3.6/site-packages/tensorflow_core/python/ops/resource_variable_ops.py:1630: calling BaseResourceVariable.__init__ (from tensorflow.python.ops.resource_variable_ops) with constraint is deprecated and will be removed in a future version.
+Instructions for updating:
+If using Keras pass *_constraint arguments to layers.
+2021-08-30 15:06:33,306  WARNING  From /home/wangyh/guangxianchengxiang/data/dataset/data/Data_751/tools/../model/ComplexNets.py:21: The name tf.real is deprecated. Please use tf.math.real instead.
+
+2021-08-30 15:06:33,307  WARNING  From /home/wangyh/guangxianchengxiang/data/dataset/data/Data_751/tools/../model/ComplexNets.py:22: The name tf.imag is deprecated. Please use tf.math.imag instead.
+
+2021-08-30 15:08:46,511  WARNING  From /home/wangyh/anaconda3/envs/keras/lib/python3.6/site-packages/tensorflow_core/python/ops/resource_variable_ops.py:1630: calling BaseResourceVariable.__init__ (from tensorflow.python.ops.resource_variable_ops) with constraint is deprecated and will be removed in a future version.
+Instructions for updating:
+If using Keras pass *_constraint arguments to layers.
+2021-08-30 15:08:46,528  WARNING  From /home/wangyh/guangxianchengxiang/data/dataset/data/Data_751/tools/../model/ComplexNets.py:21: The name tf.real is deprecated. Please use tf.math.real instead.
+
+2021-08-30 15:08:46,529  WARNING  From /home/wangyh/guangxianchengxiang/data/dataset/data/Data_751/tools/../model/ComplexNets.py:22: The name tf.imag is deprecated. Please use tf.math.imag instead.
+
+2021-08-30 15:10:38,636  WARNING  From /home/wangyh/anaconda3/envs/keras/lib/python3.6/site-packages/tensorflow_core/python/ops/resource_variable_ops.py:1630: calling BaseResourceVariable.__init__ (from tensorflow.python.ops.resource_variable_ops) with constraint is deprecated and will be removed in a future version.
+Instructions for updating:
+If using Keras pass *_constraint arguments to layers.
+2021-08-30 15:10:38,657  WARNING  From /home/wangyh/guangxianchengxiang/data/dataset/data/Data_751/tools/../model/ComplexNets.py:21: The name tf.real is deprecated. Please use tf.math.real instead.
+
+2021-08-30 15:10:38,658  WARNING  From /home/wangyh/guangxianchengxiang/data/dataset/data/Data_751/tools/../model/ComplexNets.py:22: The name tf.imag is deprecated. Please use tf.math.imag instead.
+
+2021-08-30 15:11:50,284  WARNING  From /home/wangyh/anaconda3/envs/keras/lib/python3.6/site-packages/tensorflow_core/python/ops/resource_variable_ops.py:1630: calling BaseResourceVariable.__init__ (from tensorflow.python.ops.resource_variable_ops) with constraint is deprecated and will be removed in a future version.
+Instructions for updating:
+If using Keras pass *_constraint arguments to layers.
+2021-08-30 15:11:50,307  WARNING  From /home/wangyh/guangxianchengxiang/data/dataset/data/Data_751/tools/../model/ComplexNets.py:21: The name tf.real is deprecated. Please use tf.math.real instead.
+
+2021-08-30 15:11:50,308  WARNING  From /home/wangyh/guangxianchengxiang/data/dataset/data/Data_751/tools/../model/ComplexNets.py:22: The name tf.imag is deprecated. Please use tf.math.imag instead.
+
+2021-08-30 15:11:53,415  WARNING  From /home/wangyh/anaconda3/envs/keras/lib/python3.6/site-packages/keras/backend/tensorflow_backend.py:422: The name tf.global_variables is deprecated. Please use tf.compat.v1.global_variables instead.
+
+2021-08-30 15:13:07,835  WARNING  From /home/wangyh/anaconda3/envs/keras/lib/python3.6/site-packages/tensorflow_core/python/ops/resource_variable_ops.py:1630: calling BaseResourceVariable.__init__ (from tensorflow.python.ops.resource_variable_ops) with constraint is deprecated and will be removed in a future version.
+Instructions for updating:
+If using Keras pass *_constraint arguments to layers.
+2021-08-30 15:13:07,854  WARNING  From /home/wangyh/guangxianchengxiang/data/dataset/data/Data_751/tools/../model/ComplexNets.py:21: The name tf.real is deprecated. Please use tf.math.real instead.
+
+2021-08-30 15:13:07,855  WARNING  From /home/wangyh/guangxianchengxiang/data/dataset/data/Data_751/tools/../model/ComplexNets.py:22: The name tf.imag is deprecated. Please use tf.math.imag instead.
+
+2021-08-30 15:13:10,310  WARNING  From /home/wangyh/anaconda3/envs/keras/lib/python3.6/site-packages/keras/backend/tensorflow_backend.py:422: The name tf.global_variables is deprecated. Please use tf.compat.v1.global_variables instead.
+
+2021-08-30 15:15:31,168   INFO  class:Earth_R	number of class:1388	loss:0.022891615439603583
+2021-08-30 15:13:56,471   INFO  class:Earth_B	number of class:1388	loss:0.017338347715199508
+2021-08-30 15:14:43,571   INFO  class:Earth_G	number of class:1388	loss:0.021112796799507883
+2021-08-30 15:15:56,425   INFO  class:Jupyter_B	number of class:747	loss:0.023332382987441627
+2021-08-30 15:16:24,767   INFO  class:Jupyter_G	number of class:747	loss:0.030051498059208294
+2021-08-30 15:16:50,759   INFO  class:Jupyter_R	number of class:747	loss:0.029690262548615495
+2021-08-30 15:16:51,751   INFO  class:cat	number of class:12	loss:0.005516702774912119
+2021-08-30 15:16:52,710   INFO  class:horse	number of class:12	loss:0.003768711583688855
+2021-08-30 15:16:53,796   INFO  class:parrot	number of class:22	loss:0.020009445026516914
+2021-08-30 15:16:54,712   INFO  class:punch	number of class:12	loss:0.006723870523273945
+2021-08-30 15:16:56,374   INFO  total number of class:6463	average loss:0.006723870523273945

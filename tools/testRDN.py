@@ -3,7 +3,7 @@ import _init_path
 from RDN import RDN
 import numpy as np
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '3'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 from os import path as osp
 from cfgs.config import cfg
 import pickle
@@ -29,7 +29,7 @@ def train_data_generator(train_list,batch_size):
             yield ({"input_1":x},{"output":y})
 
 if __name__ == "__main__":
-    log_file = os.path.join('../backup','log_backup.txt')
+    log_file = os.path.join('./','log_backup.txt')
     logger = create_logger(log_file)
     ## generate low resolution data
     # orig_dim = cfg.orig_dim
@@ -46,16 +46,18 @@ if __name__ == "__main__":
     #     np.save("../data/testlrdata/"+test_cls+'.npy',pred_test)
     
     ## print test loss on all test dataset
-    orig_dim = cfg.orig_dim
-    test_speckle_image = np.load(cfg.TEST.fftdata_load,allow_pickle=True).item()
-    model = getANNmodel(version='fft_lineartrans')
-    model.load_weights('../result_dir/fft_lineartrans_resdir/checkpoint')
-    model.compile(optimizer=Adam(lr=cfg.TRAIN.lr), loss=cfg.TRAIN.loss)
+    # orig_dim = cfg.orig_dim
+    # test_speckle_image = np.load(cfg.TEST.fftdata_load,allow_pickle=True).item()
+    # model = getANNmodel(version='fft_with_fft')
+    # model.load_weights('../result_dir/fft_lineartrans_resdir/checkpoint')
+    # model.compile(optimizer=Adam(lr=cfg.TRAIN.lr), loss=cfg.TRAIN.loss)
+    # test_allinput = []
+    # test_alloutput = []
 
     # for test_cls in tqdm(cfg.TEST.testlist):
     #     test_speckle_data = test_speckle_image[test_cls]
     #     test_original_image = load_dataset(cfg.datafile_location,f'Testing/Original_images/{test_cls}')
-    #     test_original_image = test_original_image.reshape(-1,orig_dim*orig_dim,1)
+    #     test_original_image = test_original_image.reshape(-1,orig_dim*orig_dim)
     #     loss = model.evaluate(test_speckle_data,test_original_image)
     #     logger.info(f"class:{test_cls}\tnumber of class:{test_speckle_data.shape[0]}\tloss:{loss}")
 
@@ -63,14 +65,15 @@ if __name__ == "__main__":
     #     test_allinput.append(test_speckle_data)
     #     test_alloutput.append(test_original_image)
     # test_allinput = np.concatenate(test_allinput,axis=0)
-    # test_alloutput = np.concatenate(test_alloutput,axis=0).
+    # test_alloutput = np.concatenate(test_alloutput,axis=0)
     # print(test_allinput.shape,test_alloutput.shape)
+    # logger.info(f"total number of class:{test_allinput.shape[0]}\taverage loss:{loss}")
     
     
 
-    # rdn = RDN(channel = 1,load_weights = cfg.TRAINRDN.load_checkpoint_path,multi_gpu = False)
+    rdn = RDN(channel = 1,load_weights = cfg.TRAINRDN.load_checkpoint_path,multi_gpu = False)
 
-    # model = rdn.get_model()
+    model = rdn.get_model()
     # # print(model.summary())
     # # forward_model = 
     
