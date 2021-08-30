@@ -25,16 +25,23 @@ def train_data_generator(train_list,batch_size):
             yield ({"input_1":x},{"output":y})
 
 if __name__ == "__main__":
-    rdn = RDN(channel = 1)
+
+    if cfg.TRAINRDN.load_weight:
+        rdn = RDN(channel = 1,load_weights = cfg.TRAINRDN.load_checkpoint_path)
+        
+    else:
+        rdn = RDN(channel = 1,load_weights = cfg.TRAINRDN.load_checkpoint_path)
+
     model = rdn.get_model()
     # print(model.summary())
+    
     if not os.path.exists(cfg.TRAINRDN.checkpoint_dir):
         os.makedirs(cfg.TRAINRDN.checkpoint_dir,exist_ok=True)
 
     checkpoint_callback = ModelCheckpoint(
-        filepath = cfg.TRAINRDN.checkpoint_dir,
+        filepath = cfg.TRAINRDN.checkpoint_path,
         verbose = 1,
-        period=200,
+        period = 50,
         save_weights_only=True
     )
     train_list = list(np.loadtxt("../data/train.txt",dtype=str))

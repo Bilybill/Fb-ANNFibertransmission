@@ -8,7 +8,7 @@ import _init_path
 from train import load_dataset,create_logger,min_maxnormalize
 import os
 import logging
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+os.environ['CUDA_VISIBLE_DEVICES'] = '3'
 import numpy as np
 from keras.optimizers import SGD,Adam
 from keras.callbacks import ReduceLROnPlateau,ModelCheckpoint
@@ -31,47 +31,33 @@ def PCC(img1,img2):
     PCC = np.sum(diffimg1 * diffimg2) / np.sqrt(np.sum(diffimg1**2)*np.sum(diffimg2**2))
     return PCC
 
-def test_inverse_model(spc_data):
-    # spc_data = spc_data.reshape(spc_data.shape[0],cfg.orig_dim,cfg.orig_dim)
-    # fft_data = complex_to_channels_np(np.fft.fft2(spc_data))
-    # fft_data = fft_data.reshape()
-    fft_data = real_to_channels_np(spc_data).reshape(-1,cfg.orig_dim*cfg.orig_dim,2)
-    # model = getANNmodel()
-    # model.load_weights('../result_dir/fft_resdir/checkpoint')
-    modelpath = "../result_dir/ori_modelsaved/orimodel.h5"
-    model = load_model(modelpath,custom_objects={'ComplexDense': ComplexDense,"Amplitude":Amplitude})
-    model.compile(optimizer=Adam(lr=cfg.TRAIN.lr), loss=cfg.TRAIN.loss)
-    ori_image = model.predict(fft_data)
-    ori_image = ori_image.reshape(ori_image.shape[0],cfg.image_dim,cfg.image_dim)
-    return ori_image
-
 if __name__ == "__main__":
-    length_image = 50000
+    # length_image = 50000
     orig_dim = cfg.orig_dim
     image_dim = cfg.image_dim
-    root_result_dir = cfg.root_result_dir
-    RGB_TYPE = 'Earth'
-    epochs = cfg.TRAIN.epochs
+    # root_result_dir = cfg.root_result_dir
+    # RGB_TYPE = 'Earth'
+    # epochs = cfg.TRAIN.epochs
 
-    os.makedirs(cfg.root_result_dir,exist_ok=True)
-    log_file = os.path.join(cfg.root_result_dir,'log_test.txt')
-    logger = create_logger(log_file)
-    logger.info("*"*20+"start logging"+"*"*20)
-    # log to file
-    gpu_list = os.environ['CUDA_VISIBLE_DEVICES'] if 'CUDA_VISIBLE_DEVICES' in os.environ.keys() else 'ALL'
-    logger.info('CUDA_VISIBLE_DEVICES=%s' % gpu_list)
+    # os.makedirs(cfg.root_result_dir,exist_ok=True)
+    # log_file = os.path.join(cfg.root_result_dir,'log_test.txt')
+    # logger = create_logger(log_file)
+    # logger.info("*"*20+"start logging"+"*"*20)
+    # # log to file
+    # gpu_list = os.environ['CUDA_VISIBLE_DEVICES'] if 'CUDA_VISIBLE_DEVICES' in os.environ.keys() else 'ALL'
+    # logger.info('CUDA_VISIBLE_DEVICES=%s' % gpu_list)
 
-    ### TRAINING loading
-    # ##Random dataset
-    # # Speckle Patterns
-    logger.info('-'*30+"start to load validation image"+'-'*30)
+    # ### TRAINING loading
+    # # ##Random dataset
+    # # # Speckle Patterns
+    # logger.info('-'*30+"start to load validation image"+'-'*30)
 
     test_speckle_image,test_original_image = getdata(np.loadtxt("../data/validation.txt",dtype=str))
-    if cfg.TEST.show_spc:
-        show_spc_image = load_dataset(cfg.datafile_location, cfg.TRAIN.x_toload, spc = True)
-        show_spc_image = show_spc_image[int(length_image/100.*90): length_image]
+    # if cfg.TEST.show_spc:
+    #     show_spc_image = load_dataset(cfg.datafile_location, cfg.TRAIN.x_toload, spc = True)
+    #     show_spc_image = show_spc_image[int(length_image/100.*90): length_image]
     
-    logger.info("test spc shape"+str(test_speckle_image.shape))
+    # logger.info("test spc shape"+str(test_speckle_image.shape))
         
     ###################### Neural Network Data
     ## Training data

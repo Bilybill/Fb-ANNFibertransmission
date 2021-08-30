@@ -8,7 +8,7 @@ import _init_path
 from train import load_dataset,create_logger,min_maxnormalize
 import os
 import logging
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+os.environ['CUDA_VISIBLE_DEVICES'] = '3'
 import numpy as np
 from keras.optimizers import SGD,Adam
 from keras.callbacks import ReduceLROnPlateau,ModelCheckpoint
@@ -99,7 +99,6 @@ if __name__ == "__main__":
         test_original_image = load_dataset(cfg.datafile_location, cfg.TEST.y_toload)
         if cfg.TRAIN.one_minimize:
             test_original_image = test_original_image / 255
-        
     
     ###################### Neural Network Data
     ## Training data
