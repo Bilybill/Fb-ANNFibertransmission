@@ -3,7 +3,7 @@ import _init_path
 from RDN import RDN
 import numpy as np
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0,1'
 from os import path as osp
 from cfgs.config import cfg
 import pickle
@@ -12,6 +12,7 @@ from keras.optimizers import SGD,Adam
 from tqdm import tqdm
 from train import load_dataset,create_logger
 import logging
+from keras.utils import multi_gpu_model
 def getdata(path):
     triandata = []
     labeldata = []
@@ -29,7 +30,7 @@ def train_data_generator(train_list,batch_size):
             yield ({"input_1":x},{"output":y})
 
 if __name__ == "__main__":
-    log_file = os.path.join('./','log_backup.txt')
+    log_file = os.path.join('../result_dir/testRDN','log_backup.txt')
     logger = create_logger(log_file)
     ## generate low resolution data
     # orig_dim = cfg.orig_dim
@@ -71,12 +72,17 @@ if __name__ == "__main__":
     
     
 
-    rdn = RDN(channel = 1,load_weights = cfg.TRAINRDN.load_checkpoint_path,multi_gpu = False)
-
+    rdn = RDN(channel = 1,multi_gpu = False)
     model = rdn.get_model()
+    paralleled_model=multi_gpu_model(model,gpus=2)
+    paralleled_model.load_weights(cfg.TRAINRDN.load_checkpoint_path) # 此时model也自动载入了权重，可用model进行预测
+    # model.predict()
+    
+    
     # # print(model.summary())
     # # forward_model = 
-    
+    test_image = np.load('../data/testlrdata/parrot.npy')
+    print(test_image.shape)
 
     # train_list = list(np.loadtxt("../data/train.txt",dtype=str))
     # train_list += list(np.loadtxt("../data/validation.txt",dtype=str))
