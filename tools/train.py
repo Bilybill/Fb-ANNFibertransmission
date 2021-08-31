@@ -2,7 +2,6 @@ from keras import metrics
 import _init_path
 import os
 import logging
-os.environ['CUDA_VISIBLE_DEVICES'] = '2'
 import numpy as np
 from keras.optimizers import SGD,Adam
 from keras.callbacks import ReduceLROnPlateau,ModelCheckpoint
@@ -86,6 +85,7 @@ def load_data(cfg,logger):
     return x_train_ch,y_train,x_validation_ch,y_validation
 
 if __name__ == "__main__":
+    os.environ['CUDA_VISIBLE_DEVICES'] = '2'
     length_image = 50000
     orig_dim = cfg.orig_dim
     image_dim = cfg.image_dim

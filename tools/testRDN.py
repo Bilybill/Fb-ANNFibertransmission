@@ -1,9 +1,13 @@
+from matplotlib import pyplot as plt
+plt.rcParams['image.cmap'] = 'gray'
+plt.rcParams['axes.linewidth'] = 0
+from skimage.metrics import structural_similarity as ssim
+from skimage.measure import compare_psnr as PSNR
 from genericpath import exists
 import _init_path
 from RDN import RDN
 import numpy as np
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '2,3'
 from os import path as osp
 from cfgs.config import cfg
 import pickle
@@ -28,10 +32,17 @@ def train_data_generator(train_list,batch_size):
         for i in range(0,len(train_list),batch_size):
             x,y = getdata(train_list[i:i+batch_size])
             yield ({"input_1":x},{"output":y})
-
+def PCC(img1,img2):
+    m1 = np.mean(img1)
+    m2 = np.mean(img2)
+    diffimg1 = img1 - m1
+    diffimg2 = img2 - m2
+    PCC = np.sum(diffimg1 * diffimg2) / np.sqrt(np.sum(diffimg1**2)*np.sum(diffimg2**2))
+    return PCC
 if __name__ == "__main__":
-    log_file = os.path.join('../result_dir/testRDN','log_backup.txt')
-    logger = create_logger(log_file)
+    os.environ['CUDA_VISIBLE_DEVICES'] = '3'
+    # log_file = os.path.join('../result_dir/testRDN','log_backup.txt')
+    # logger = create_logger(log_file)
     ## generate low resolution data
     # orig_dim = cfg.orig_dim
     # test_speckle_image = np.load(cfg.TEST.fftdata_load,allow_pickle=True).item()
@@ -70,35 +81,51 @@ if __name__ == "__main__":
     # print(test_allinput.shape,test_alloutput.shape)
     # logger.info(f"total number of class:{test_allinput.shape[0]}\taverage loss:{loss}")
     
-    
-
-    rdn = RDN(channel = 1,multi_gpu = False)
+    y_test = load_dataset(cfg.datafile_location,cfg.TEST.y_toload).reshape(-1,cfg.orig_dim,cfg.orig_dim,1)
+    rdn = RDN(channel = 1,multi_gpu = False,load_weights = cfg.TESTRDN.load_checkpoint_path)
     model = rdn.get_model()
-    paralleled_model=multi_gpu_model(model,gpus=2)
-    paralleled_model.load_weights(cfg.TRAINRDN.load_checkpoint_path) # 此时model也自动载入了权重，可用model进行预测
-    # model.predict()
-    
-    
-    # # print(model.summary())
-    # # forward_model = 
-    test_image = np.load('../data/testlrdata/parrot.npy')
-    print(test_image.shape)
 
-    # train_list = list(np.loadtxt("../data/train.txt",dtype=str))
-    # train_list += list(np.loadtxt("../data/validation.txt",dtype=str))
-    # train_generator = train_data_generator(train_list,batch_size=cfg.TRAINRDN.batch_size)
-    # # d1,d2 = train_generator.__next__()
-    # # y2 = model.predict(d1)
-    # # print(d1['input_1'].shape,d2['output'].shape)
-    # # print(f'y2 shape{y2.shape}')
-    # history = model.fit_generator(train_generator,
-    # steps_per_epoch=int(50000/cfg.TRAINRDN.batch_size),
-    # verbose = 1,
-    # epochs = cfg.TRAINRDN.epochs,
-    # callbacks = [checkpoint_callback],
-    # shuffle = True
-    # )
-    # history_file = osp.join(cfg.TRAINRDN.checkpoint_dir,"history_train.txt")
-    
-    # with open(history_file,'wb') as his_txt:
-    #     pickle.dump(history.history,his_txt)
+    x_test = np.load('../data/testlrdata/%s.npy'%cfg.TEST.testclass)
+    pred_test = model.predict(y_test)
+    # print(test_image.shape,hrimage.shape)
+    label = 'SSIM:{:.3f} PSNR:{:.3f} PCC:{:.3f}'
+    shownum = 4
+    divnum = 3
+    fig = plt.figure(1)
+    fig.set_size_inches(20,6)
+    data_range = 1
+
+    for i in range(divnum*shownum):
+        ax = plt.subplot(shownum,divnum,1+i)
+        if i%divnum == 1:
+            if i == 1:
+                ax.set_title("Predict image")
+            multichannel = False
+            if cfg.TEST.show_rgb:
+                multichannel = True
+            print(f"pred index:{i//divnum},y test index:{i//divnum}")
+            ssim_score = ssim(pred_test[i//divnum], y_test[i//divnum], data_range=data_range, multichannel=multichannel)
+            psnr_score = PSNR(pred_test[i//divnum], y_test[i//divnum], data_range=data_range)
+            pcc_score = PCC(pred_test[i//divnum], y_test[i//divnum])
+            ax.set_xlabel(label.format(ssim_score,psnr_score,pcc_score))
+            pred_img = pred_test[i//divnum]
+            plt.imshow(pred_img)
+
+        elif i%divnum == 0:
+            if i == 0:
+                ax.set_title("Original image")
+            plt.imshow(y_test[i//divnum])
+        elif i%divnum == 2:
+            if i == 2:
+                ax.set_title('Input image')
+            print(f"input index:{i//divnum},y test index:{i//divnum}")
+            ssim_score = ssim(x_test[i//divnum], y_test[i//divnum], data_range=data_range, multichannel=multichannel)
+            psnr_score = PSNR(x_test[i//divnum], y_test[i//divnum], data_range=data_range)
+            pcc_score = PCC(x_test[i//divnum], y_test[i//divnum])
+            ax.set_xlabel(label.format(ssim_score,psnr_score,pcc_score))
+            plt.imshow(x_test[i//divnum])
+
+    plt.tight_layout()
+    plt.subplots_adjust(wspace=0.5,hspace=1)
+    plt.savefig('../result_dir/rdn_res/rdn_res.png')
+    plt.show()

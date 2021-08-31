@@ -144,10 +144,11 @@ cython_debug/
 #vscodedir
 .vscode/
 .idea/
-./result_dir/
+result_dir/
 *.tif
 *.mat
 *.png
 *.eps
 .Rhistory
 *.bin
+./data/generate_fft_data/

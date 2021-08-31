@@ -5,7 +5,7 @@ __C = edict()
 cfg = __C
 
 # 0. basic config
-__C.version_name = 'fft_with_fft'
+__C.version_name = 'fft_with_fft_addsigmoid'
 __C.image_dim = 120 if __C.version_name != 'inverse_genspc' else 92
 __C.orig_dim = 92 if __C.version_name != 'inverse_genspc' else 120
 __C.lamb = 0.1
@@ -24,12 +24,12 @@ __C.TRAIN.usegenerator = True
 __C.TRAIN.x_toload = 'Training/Speckle_images/ImageNet' if __C.version_name != 'inverse_genspc' else 'Training/Original_images/ImageNet'
 __C.TRAIN.y_toload = 'Training/Original_images/ImageNet' if __C.version_name != 'inverse_genspc' else 'Training/Speckle_images/ImageNet'
 __C.TRAIN.one_minimize = True if __C.version_name == 'inverse_genspc' else False
-__C.TRAIN.loadweights = False
+__C.TRAIN.loadweights = True
 # __C.TRAIN.load_path = '../result_dir/%s_resdir/checkpoint' % __C.version_name
-__C.TRAIN.load_path = '../result_dir/fft_resdir/bestcheckpoint'
+__C.TRAIN.load_path = '../result_dir/fft_with_fft_resdir/lastcheckpoint'
 
 __C.TRAIN.epochs = 500
-__C.TRAIN.lr = 2e-8
+__C.TRAIN.lr = 1e-2
 __C.TRAIN.batch_size = 45
 __C.TRAIN.checkpoint_dir = '../result_dir/%s_resdir' % __C.version_name
 __C.TRAIN.checkpoint_path = '../result_dir/%s_resdir/checkpoint' % __C.version_name
@@ -38,15 +38,21 @@ __C.TRAIN.fftdata_load = '../data/trainfft_data.npy'
 __C.TRAIN.use_train_to_test = True
 # __C TRAIN RDN network settings
 __C.TRAINRDN = edict()
-__C.TRAINRDN.checkpoint_dir = '../result_dir/rdn_res'
+__C.TRAINRDN.checkpoint_dir = '../result_dir/rdn_resdir'
+__C.TRAINRDN.checkpoint_path = '../result_dir/rdn_resdir/checkpoint'
 __C.TRAINRDN.batch_size = 16
 __C.TRAINRDN.epochs = 1000
+__C.TRAINRDN.load_checkpoint_path = '../result_dir/rdn_resdir/checkpoint'
+__C.TRAINRDN.load_weight = True
+
+__C.TESTRDN = edict()
+__C.TESTRDN.load_checkpoint_path = '../result_dir/rdn_resdir/singlecheckpoint'
 
 __C.TEST = edict()
 __C.TESTALL = True
 __C.TEST.usefftdata = True
 __C.TEST.compare = False
-__C.TEST.testclass = 'punch'
+__C.TEST.testclass = 'cat'
 __C.TEST.x_toload = 'Testing/Speckle_images/%s' % __C.TEST.testclass if __C.version_name != 'inverse_genspc' else 'Testing/Original_images/%s' % __C.TEST.testclass
 __C.TEST.y_toload = 'Testing/Original_images/%s' % __C.TEST.testclass if __C.version_name != 'inverse_genspc' else 'Testing/Speckle_images/%s' % __C.TEST.testclass
 __C.TEST.show_spc = True

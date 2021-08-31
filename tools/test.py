@@ -231,12 +231,6 @@ if __name__ == "__main__":
             if i == 2:
                 ax.set_title('speckle image')
             plt.imshow(show_spc_image[i//divnum])
-
-        # elif i%divnum == 4:
-        #     if i == 4:
-        #         ax.set_title('speckle_angle image')
-        #     plt.imshow(x_test_fft_angle[i//divnum])
-        # plt.axis('off')
     plt.tight_layout()
     plt.subplots_adjust(wspace=0.5,hspace=1)
     # plt.savefig('./resultfig/compare_%s_res.png' % cfg.version_name)

@@ -1,0 +1,49 @@
+2021-08-30 14:44:25,602  WARNING  From /home/2020310866/miniconda3/envs/keras/lib/python3.6/site-packages/tensorflow_core/python/ops/resource_variable_ops.py:1630: calling BaseResourceVariable.__init__ (from tensorflow.python.ops.resource_variable_ops) with constraint is deprecated and will be removed in a future version.
+Instructions for updating:
+If using Keras pass *_constraint arguments to layers.
+2021-08-30 14:44:25,621  WARNING  From /home/2020310866/fibertrans/Fb-ANNFibertransmission/tools/../model/ComplexNets.py:21: The name tf.real is deprecated. Please use tf.math.real instead.
+
+2021-08-30 14:44:25,622  WARNING  From /home/2020310866/fibertrans/Fb-ANNFibertransmission/tools/../model/ComplexNets.py:22: The name tf.imag is deprecated. Please use tf.math.imag instead.
+
+2021-08-30 14:45:07,294  WARNING  From /home/2020310866/miniconda3/envs/keras/lib/python3.6/site-packages/tensorflow_core/python/ops/resource_variable_ops.py:1630: calling BaseResourceVariable.__init__ (from tensorflow.python.ops.resource_variable_ops) with constraint is deprecated and will be removed in a future version.
+Instructions for updating:
+If using Keras pass *_constraint arguments to layers.
+2021-08-30 14:45:07,316  WARNING  From /home/2020310866/fibertrans/Fb-ANNFibertransmission/tools/../model/ComplexNets.py:21: The name tf.real is deprecated. Please use tf.math.real instead.
+
+2021-08-30 14:45:07,317  WARNING  From /home/2020310866/fibertrans/Fb-ANNFibertransmission/tools/../model/ComplexNets.py:22: The name tf.imag is deprecated. Please use tf.math.imag instead.
+
+2021-08-30 14:46:41,815  WARNING  From /home/2020310866/miniconda3/envs/keras/lib/python3.6/site-packages/tensorflow_core/python/ops/resource_variable_ops.py:1630: calling BaseResourceVariable.__init__ (from tensorflow.python.ops.resource_variable_ops) with constraint is deprecated and will be removed in a future version.
+Instructions for updating:
+If using Keras pass *_constraint arguments to layers.
+2021-08-30 14:46:41,836  WARNING  From /home/2020310866/fibertrans/Fb-ANNFibertransmission/tools/../model/ComplexNets.py:21: The name tf.real is deprecated. Please use tf.math.real instead.
+
+2021-08-30 14:46:41,837  WARNING  From /home/2020310866/fibertrans/Fb-ANNFibertransmission/tools/../model/ComplexNets.py:22: The name tf.imag is deprecated. Please use tf.math.imag instead.
+
+2021-08-30 14:49:27,135  WARNING  From /home/2020310866/miniconda3/envs/keras/lib/python3.6/site-packages/tensorflow_core/python/ops/resource_variable_ops.py:1630: calling BaseResourceVariable.__init__ (from tensorflow.python.ops.resource_variable_ops) with constraint is deprecated and will be removed in a future version.
+Instructions for updating:
+If using Keras pass *_constraint arguments to layers.
+2021-08-30 14:49:27,155  WARNING  From /home/2020310866/fibertrans/Fb-ANNFibertransmission/tools/../model/ComplexNets.py:21: The name tf.real is deprecated. Please use tf.math.real instead.
+
+2021-08-30 14:49:27,156  WARNING  From /home/2020310866/fibertrans/Fb-ANNFibertransmission/tools/../model/ComplexNets.py:22: The name tf.imag is deprecated. Please use tf.math.imag instead.
+
+2021-08-30 14:51:13,941  WARNING  From /home/2020310866/miniconda3/envs/keras/lib/python3.6/site-packages/tensorflow_core/python/ops/resource_variable_ops.py:1630: calling BaseResourceVariable.__init__ (from tensorflow.python.ops.resource_variable_ops) with constraint is deprecated and will be removed in a future version.
+Instructions for updating:
+If using Keras pass *_constraint arguments to layers.
+2021-08-30 14:51:13,963  WARNING  From /home/2020310866/fibertrans/Fb-ANNFibertransmission/tools/../model/ComplexNets.py:21: The name tf.real is deprecated. Please use tf.math.real instead.
+
+2021-08-30 14:51:13,964  WARNING  From /home/2020310866/fibertrans/Fb-ANNFibertransmission/tools/../model/ComplexNets.py:22: The name tf.imag is deprecated. Please use tf.math.imag instead.
+
+2021-08-30 14:55:27,206  WARNING  From /home/2020310866/miniconda3/envs/keras/lib/python3.6/site-packages/tensorflow_core/python/ops/resource_variable_ops.py:1630: calling BaseResourceVariable.__init__ (from tensorflow.python.ops.resource_variable_ops) with constraint is deprecated and will be removed in a future version.
+Instructions for updating:
+If using Keras pass *_constraint arguments to layers.
+2021-08-30 14:55:27,227  WARNING  From /home/2020310866/fibertrans/Fb-ANNFibertransmission/tools/../model/ComplexNets.py:21: The name tf.real is deprecated. Please use tf.math.real instead.
+
+2021-08-30 14:55:27,228  WARNING  From /home/2020310866/fibertrans/Fb-ANNFibertransmission/tools/../model/ComplexNets.py:22: The name tf.imag is deprecated. Please use tf.math.imag instead.
+
+2021-08-30 14:55:56,117  WARNING  From /home/2020310866/miniconda3/envs/keras/lib/python3.6/site-packages/tensorflow_core/python/ops/resource_variable_ops.py:1630: calling BaseResourceVariable.__init__ (from tensorflow.python.ops.resource_variable_ops) with constraint is deprecated and will be removed in a future version.
+Instructions for updating:
+If using Keras pass *_constraint arguments to layers.
+2021-08-30 14:55:56,140  WARNING  From /home/2020310866/fibertrans/Fb-ANNFibertransmission/tools/../model/ComplexNets.py:21: The name tf.real is deprecated. Please use tf.math.real instead.
+
+2021-08-30 14:55:56,142  WARNING  From /home/2020310866/fibertrans/Fb-ANNFibertransmission/tools/../model/ComplexNets.py:22: The name tf.imag is deprecated. Please use tf.math.imag instead.
+
