@@ -41,8 +41,10 @@ def PCC(img1,img2):
     return PCC
 if __name__ == "__main__":
     os.environ['CUDA_VISIBLE_DEVICES'] = '3'
+
     # log_file = os.path.join('../result_dir/testRDN','log_backup.txt')
     # logger = create_logger(log_file)
+    
     ## generate low resolution data
     # orig_dim = cfg.orig_dim
     # test_speckle_image = np.load(cfg.TEST.fftdata_load,allow_pickle=True).item()
@@ -80,14 +82,42 @@ if __name__ == "__main__":
     # test_alloutput = np.concatenate(test_alloutput,axis=0)
     # print(test_allinput.shape,test_alloutput.shape)
     # logger.info(f"total number of class:{test_allinput.shape[0]}\taverage loss:{loss}")
+
+    ## transfer multi gpu model weights into single gpu model
+    # rdn = RDN(channel = 1,multi_gpu = False)
+    # model = rdn.get_model()
+    # parrel_model = multi_gpu_model(model,gpus=2)
+    # parrel_model.load_weights(cfg.TESTRDN.load_checkpoint_path)
+    # model.save_weights('../result_dir/rdn_resdir/checkpoint_v2')
     
-    y_test = load_dataset(cfg.datafile_location,cfg.TEST.y_toload).reshape(-1,cfg.orig_dim,cfg.orig_dim,1)
+    ## test RDN model performence
+    if cfg.TESTRDN.show_rgb:
+        RGB_TYPE = cfg.TEST.testclass
+        r_ori = load_dataset(cfg.datafile_location,'Testing/Original_images/%s_R' % RGB_TYPE)
+        g_ori = load_dataset(cfg.datafile_location,'Testing/Original_images/%s_G' % RGB_TYPE)
+        b_ori = load_dataset(cfg.datafile_location,'Testing/Original_images/%s_B' % RGB_TYPE)
+        len_div = r_ori.shape[0]
+        y_test = np.concatenate([g_ori,b_ori,r_ori],axis=-1)
+        x_test_r = np.load('../data/testlrdata/%s_R.npy'%cfg.TEST.testclass)
+        x_test_g = np.load('../data/testlrdata/%s_G.npy'%cfg.TEST.testclass)
+        x_test_b = np.load('../data/testlrdata/%s_B.npy'%cfg.TEST.testclass)
+        x_test = np.concatenate([x_test_r,x_test_g,x_test_b],axis=0)
+    else:
+        y_test = load_dataset(cfg.datafile_location,cfg.TEST.y_toload).reshape(-1,cfg.orig_dim,cfg.orig_dim,1)
+        x_test = np.load('../data/testlrdata/%s.npy'%cfg.TEST.testclass)
     rdn = RDN(channel = 1,multi_gpu = False,load_weights = cfg.TESTRDN.load_checkpoint_path)
     model = rdn.get_model()
-
-    x_test = np.load('../data/testlrdata/%s.npy'%cfg.TEST.testclass)
-    pred_test = model.predict(y_test)
-    # print(test_image.shape,hrimage.shape)
+    pred_test = model.predict(x_test)
+    if cfg.TESTRDN.show_rgb:
+        r_pred = pred_test[0:len_div]
+        g_pred = pred_test[len_div:2*len_div]
+        b_pred = pred_test[2*len_div:3*len_div]
+        pred_test = np.concatenate([g_pred,b_pred,r_pred],axis=-1)
+        r_x = x_test[0:len_div]
+        g_x = x_test[len_div:2*len_div]
+        b_x = x_test[2*len_div:3*len_div]
+        x_test = np.concatenate([g_x,b_x,r_x],axis=-1)
+    print(f'min:{np.min(pred_test)},max:{np.max(pred_test)}')
     label = 'SSIM:{:.3f} PSNR:{:.3f} PCC:{:.3f}'
     shownum = 4
     divnum = 3
@@ -101,7 +131,7 @@ if __name__ == "__main__":
             if i == 1:
                 ax.set_title("Predict image")
             multichannel = False
-            if cfg.TEST.show_rgb:
+            if cfg.TESTRDN.show_rgb:
                 multichannel = True
             print(f"pred index:{i//divnum},y test index:{i//divnum}")
             ssim_score = ssim(pred_test[i//divnum], y_test[i//divnum], data_range=data_range, multichannel=multichannel)
@@ -127,5 +157,5 @@ if __name__ == "__main__":
 
     plt.tight_layout()
     plt.subplots_adjust(wspace=0.5,hspace=1)
-    plt.savefig('../result_dir/rdn_res/rdn_res.png')
+    plt.savefig('../result_dir/rdn_res/rdn_res_%s.png'%cfg.TEST.testclass)
     plt.show()

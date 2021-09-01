@@ -210,9 +210,9 @@ if __name__ == "__main__":
             multichannel = False
             if cfg.TEST.show_rgb:
                 multichannel = True
-            ssim_score = ssim(pred_test[i//divnum], y_test[(i+divnum-1)//divnum], data_range=data_range, multichannel=multichannel)
-            psnr_score = PSNR(pred_test[i//divnum], y_test[(i+divnum-1)//divnum], data_range=data_range)
-            pcc_score = PCC(pred_test[i//divnum], y_test[(i+divnum-1)//divnum])
+            ssim_score = ssim(pred_test[i//divnum], y_test[i//divnum], data_range=data_range, multichannel=multichannel)
+            psnr_score = PSNR(pred_test[i//divnum], y_test[i//divnum], data_range=data_range)
+            pcc_score = PCC(pred_test[i//divnum], y_test[i//divnum])
             ax.set_xlabel(label.format(ssim_score,psnr_score,pcc_score))
             pred_img = pred_test[i//divnum]
             plt.imshow(pred_img)
