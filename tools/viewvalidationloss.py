@@ -8,7 +8,6 @@ import _init_path
 from train import load_dataset,create_logger,min_maxnormalize
 import os
 import logging
-os.environ['CUDA_VISIBLE_DEVICES'] = '3'
 import numpy as np
 from keras.optimizers import SGD,Adam
 from keras.callbacks import ReduceLROnPlateau,ModelCheckpoint
@@ -23,6 +22,7 @@ from keras.models import Model
 from train import min_maxnormalize,getdata
 
 if __name__ == "__main__":
+    os.environ['CUDA_VISIBLE_DEVICES'] = '3'
     orig_dim = cfg.orig_dim
     image_dim = cfg.image_dim
 
@@ -37,9 +37,9 @@ if __name__ == "__main__":
         y_eval = y_test
     ##################          MODEL  
     # check checkpoint
-    model = getANNmodel()
+    model = getANNmodel(version='fft_with_fft_addsigmoid')
     
-    model.load_weights(cfg.TRAIN.checkpoint_path)
+    model.load_weights('../result_dir/fft_with_fft_addsigmoid_resdir/checkpoint')
 
     model.compile(optimizer=Adam(lr=cfg.TRAIN.lr), loss=cfg.TRAIN.loss)
 

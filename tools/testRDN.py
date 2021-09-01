@@ -40,10 +40,10 @@ def PCC(img1,img2):
     PCC = np.sum(diffimg1 * diffimg2) / np.sqrt(np.sum(diffimg1**2)*np.sum(diffimg2**2))
     return PCC
 if __name__ == "__main__":
-    os.environ['CUDA_VISIBLE_DEVICES'] = '3'
+    os.environ['CUDA_VISIBLE_DEVICES'] = '2,3'
 
-    # log_file = os.path.join('../result_dir/testRDN','log_backup.txt')
-    # logger = create_logger(log_file)
+    log_file = os.path.join('../result_dir/testRDN','log_backup.txt')
+    logger = create_logger(log_file)
     
     ## generate low resolution data
     # orig_dim = cfg.orig_dim
@@ -62,8 +62,8 @@ if __name__ == "__main__":
     ## print test loss on all test dataset
     # orig_dim = cfg.orig_dim
     # test_speckle_image = np.load(cfg.TEST.fftdata_load,allow_pickle=True).item()
-    # model = getANNmodel(version='fft_with_fft')
-    # model.load_weights('../result_dir/fft_lineartrans_resdir/checkpoint')
+    # model = getANNmodel(version='fft_with_fft_addsigmoid')
+    # model.load_weights('../result_dir/fft_with_fft_addsigmoid_resdir/checkpoint')
     # model.compile(optimizer=Adam(lr=cfg.TRAIN.lr), loss=cfg.TRAIN.loss)
     # test_allinput = []
     # test_alloutput = []
@@ -83,31 +83,40 @@ if __name__ == "__main__":
     # print(test_allinput.shape,test_alloutput.shape)
     # logger.info(f"total number of class:{test_allinput.shape[0]}\taverage loss:{loss}")
 
-    ## transfer multi gpu model weights into single gpu model
+    # transfer multi gpu model weights into single gpu model
     # rdn = RDN(channel = 1,multi_gpu = False)
     # model = rdn.get_model()
     # parrel_model = multi_gpu_model(model,gpus=2)
     # parrel_model.load_weights(cfg.TESTRDN.load_checkpoint_path)
-    # model.save_weights('../result_dir/rdn_resdir/checkpoint_v2')
+    # model.save_weights('../result_dir/rdn_resdir/singlecheckpoint_v2')
     
     ## test RDN model performence
-    if cfg.TESTRDN.show_rgb:
-        RGB_TYPE = cfg.TEST.testclass
-        r_ori = load_dataset(cfg.datafile_location,'Testing/Original_images/%s_R' % RGB_TYPE)
-        g_ori = load_dataset(cfg.datafile_location,'Testing/Original_images/%s_G' % RGB_TYPE)
-        b_ori = load_dataset(cfg.datafile_location,'Testing/Original_images/%s_B' % RGB_TYPE)
-        len_div = r_ori.shape[0]
-        y_test = np.concatenate([g_ori,b_ori,r_ori],axis=-1)
-        x_test_r = np.load('../data/testlrdata/%s_R.npy'%cfg.TEST.testclass)
-        x_test_g = np.load('../data/testlrdata/%s_G.npy'%cfg.TEST.testclass)
-        x_test_b = np.load('../data/testlrdata/%s_B.npy'%cfg.TEST.testclass)
-        x_test = np.concatenate([x_test_r,x_test_g,x_test_b],axis=0)
+    if cfg.TESTRDN.use_pre_model:
+        logger.info("use pre model")
+        use_version = 'fft_with_fft'
+        recons_model = getANNmodel(version=use_version)
+        recons_model.load_weights('../result_dir/%s_resdir/checkpoint' % use_version)
+        recons_model.compile(optimizer=Adam(lr=cfg.TRAIN.lr), loss=cfg.TRAIN.loss)
+        input_spc_fft = np.load(cfg.TEST.fftdata_load,allow_pickle=True).item()[cfg.TEST.testclass]
+        x_test = recons_model.predict(input_spc_fft).reshape(-1,cfg.orig_dim,cfg.orig_dim,1)
     else:
-        y_test = load_dataset(cfg.datafile_location,cfg.TEST.y_toload).reshape(-1,cfg.orig_dim,cfg.orig_dim,1)
-        x_test = np.load('../data/testlrdata/%s.npy'%cfg.TEST.testclass)
+        if cfg.TESTRDN.show_rgb:
+            RGB_TYPE = cfg.TEST.testclass
+            r_ori = load_dataset(cfg.datafile_location,'Testing/Original_images/%s_R' % RGB_TYPE)
+            g_ori = load_dataset(cfg.datafile_location,'Testing/Original_images/%s_G' % RGB_TYPE)
+            b_ori = load_dataset(cfg.datafile_location,'Testing/Original_images/%s_B' % RGB_TYPE)
+            len_div = r_ori.shape[0]
+            y_test = np.concatenate([g_ori,b_ori,r_ori],axis=-1)
+            x_test_r = np.load('../data/testlrdata/%s_R.npy'%cfg.TEST.testclass)
+            x_test_g = np.load('../data/testlrdata/%s_G.npy'%cfg.TEST.testclass)
+            x_test_b = np.load('../data/testlrdata/%s_B.npy'%cfg.TEST.testclass)
+            x_test = np.concatenate([x_test_r,x_test_g,x_test_b],axis=0)
+        else:
+            y_test = load_dataset(cfg.datafile_location,cfg.TEST.y_toload).reshape(-1,cfg.orig_dim,cfg.orig_dim,1)
+            x_test = np.load('../data/testlrdata/%s.npy'%cfg.TEST.testclass)
     rdn = RDN(channel = 1,multi_gpu = False,load_weights = cfg.TESTRDN.load_checkpoint_path)
-    model = rdn.get_model()
-    pred_test = model.predict(x_test)
+    rdn_model = rdn.get_model()
+    pred_test = rdn_model.predict(x_test)
     if cfg.TESTRDN.show_rgb:
         r_pred = pred_test[0:len_div]
         g_pred = pred_test[len_div:2*len_div]
@@ -157,5 +166,5 @@ if __name__ == "__main__":
 
     plt.tight_layout()
     plt.subplots_adjust(wspace=0.5,hspace=1)
-    plt.savefig('../result_dir/rdn_res/rdn_res_%s.png'%cfg.TEST.testclass)
+    # plt.savefig('../result_dir/rdn_res/rdn_res_%s.png'%cfg.TEST.testclass)
     plt.show()
