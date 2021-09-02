@@ -46,13 +46,15 @@ __C.TRAINRDN.load_checkpoint_path = '../result_dir/rdn_resdir/checkpoint'
 __C.TRAINRDN.load_weight = True
 
 __C.TESTRDN = edict()
-__C.TESTRDN.load_checkpoint_path = '../result_dir/rdn_resdir/singlecheckpoint'
+__C.TESTRDN.load_checkpoint_path = '../result_dir/rdn_resdir/singlecheckpoint_v2'
+__C.TESTRDN.show_rgb = False
+__C.TESTRDN.use_pre_model = True
 
 __C.TEST = edict()
 __C.TESTALL = True
 __C.TEST.usefftdata = True
 __C.TEST.compare = False
-__C.TEST.testclass = 'cat'
+__C.TEST.testclass = 'punch'
 __C.TEST.x_toload = 'Testing/Speckle_images/%s' % __C.TEST.testclass if __C.version_name != 'inverse_genspc' else 'Testing/Original_images/%s' % __C.TEST.testclass
 __C.TEST.y_toload = 'Testing/Original_images/%s' % __C.TEST.testclass if __C.version_name != 'inverse_genspc' else 'Testing/Speckle_images/%s' % __C.TEST.testclass
 __C.TEST.show_spc = True

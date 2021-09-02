@@ -15,21 +15,25 @@ import tensorflow as tf
 
 
 def getANNmodel(version = None):
+
     if version is not None:
-        cfg.version_name = version
-    image_dim = cfg.orig_dim if cfg.version_name == 'inverse_genspc' else cfg.image_dim
-    orig_dim = cfg.image_dim if cfg.version_name == 'inverse_genspc' else cfg.orig_dim
+        use_version = version
+    else:
+        use_version = cfg.version_name
+    
+    image_dim = cfg.orig_dim if use_version == 'inverse_genspc' else cfg.image_dim
+    orig_dim = cfg.image_dim if use_version == 'inverse_genspc' else cfg.orig_dim
     input_img = Input(shape=(image_dim*image_dim, 2))     #input is complex number
     l = input_img
     
     l = ComplexDense(orig_dim*orig_dim, use_bias=False, kernel_regularizer=regularizers.l2(cfg.lamb))(l)
     
-    if cfg.version_name == "fft_with_fft":
+    if use_version == "fft_with_fft":
         l = Lambda(lambda x:channels_to_complex(x),name='channels2complex')(l)
         l = Reshape((orig_dim,orig_dim))(l)
         l = Lambda(lambda x: tf.signal.ifft2d(x),name='ifftoutput')(l)
         l = Lambda(lambda x: tf.reshape(tf.abs(x),[-1,orig_dim*orig_dim]),name='output')(l)
-    elif cfg.version_name == 'fft_with_fft_addsigmoid':
+    elif use_version == 'fft_with_fft_addsigmoid':
         l = Lambda(lambda x:channels_to_complex(x),name='channels2complex')(l)
         l = Reshape((orig_dim,orig_dim))(l)
         l = Lambda(lambda x: tf.signal.ifft2d(x),name='ifftoutput')(l)
@@ -37,16 +41,16 @@ def getANNmodel(version = None):
     else:
         l = Amplitude()(l)
     
-    if cfg.version_name == 'fft':
+    if use_version == 'fft':
         l = Lambda(lambda x: keras.activations.sigmoid(x),name='output')(l)
-    elif cfg.version_name == "fft_withtanh":
+    elif use_version == "fft_withtanh":
         l = Lambda(lambda x: keras.activations.tanh(x),name='output')(l)
-    elif cfg.version_name == "fft_sigmove":
+    elif use_version == "fft_sigmove":
         l = Lambda(lambda x: keras.activations.sigmoid(x-5),name='output')(l)
-    elif cfg.version_name == 'fft_lineartrans':
+    elif use_version == 'fft_lineartrans':
         l = Lambda(lambda x: 2*keras.activations.sigmoid(x)-1,name='output')(l)
         # l = Lambda(lambda x: 2*x-1,name='output')(l)
-    elif cfg.version_name == 'fft_with_fft' or cfg.version_name == 'fft_with_fft_addsigmoid':
+    elif use_version == 'fft_with_fft' or use_version == 'fft_with_fft_addsigmoid':
         pass
     else:
         raise ValueError("unkonwn type")
