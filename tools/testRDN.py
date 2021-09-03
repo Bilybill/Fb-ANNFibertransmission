@@ -92,8 +92,8 @@ if __name__ == "__main__":
     
     ## test RDN model performence
     if cfg.TESTRDN.use_pre_model:
-        logger.info("use pre model")
-        use_version = 'fft_with_fft'
+        use_version = 'fft_lineartrans'
+        logger.info(f"use pre model:{use_version}")
         recons_model = getANNmodel(version=use_version)
         recons_model.load_weights('../result_dir/%s_resdir/checkpoint' % use_version)
         recons_model.compile(optimizer=Adam(lr=cfg.TRAIN.lr), loss=cfg.TRAIN.loss)
@@ -129,12 +129,16 @@ if __name__ == "__main__":
         b_x = x_test[2*len_div:3*len_div]
         x_test = np.concatenate([g_x,b_x,r_x],axis=-1)
     print(f'min:{np.min(pred_test)},max:{np.max(pred_test)}')
-    label = 'PSNR:{:.3f} PCC:{:.3f}'
+    label = 'SSIM:{:.3f} PSNR:{:.3f} PCC:{:.3f}'
     shownum = 4
     divnum = 3
     fig = plt.figure(1)
     fig.set_size_inches(20,6)
     data_range = 1
+
+    x_test = np.squeeze(x_test)
+    y_test = np.squeeze(y_test)
+    pred_test = np.squeeze(pred_test)
 
     for i in range(divnum*shownum):
         ax = plt.subplot(shownum,divnum,1+i)
@@ -144,14 +148,10 @@ if __name__ == "__main__":
             multichannel = False
             if cfg.TESTRDN.show_rgb:
                 multichannel = True
-            # print(f"pred index:{i//divnum},y test index:{i//divnum}")
-            # logger.info(f'x_test shape:{x_test[i//divnum].shape}')
-            # logger.info(f'y_test shape:{y_test[i//divnum].shape}')
-            # logger.info(f'pred_test shape:{pred_test[i//divnum].shape}')
-            # ssim_score = ssim(pred_test[i//divnum], y_test[i//divnum], data_range=data_range, multichannel=multichannel)
+            ssim_score = ssim(pred_test[i//divnum], y_test[i//divnum], data_range=data_range, multichannel=multichannel)
             psnr_score = PSNR(pred_test[i//divnum], y_test[i//divnum], data_range=data_range)
             pcc_score = PCC(pred_test[i//divnum], y_test[i//divnum])
-            ax.set_xlabel(label.format(psnr_score,pcc_score))
+            ax.set_xlabel(label.format(ssim_score,psnr_score,pcc_score))
             pred_img = pred_test[i//divnum]
             plt.imshow(pred_img)
 
@@ -163,10 +163,10 @@ if __name__ == "__main__":
             if i == 2:
                 ax.set_title('Input image')
             print(f"input index:{i//divnum},y test index:{i//divnum}")
-            # ssim_score = ssim(x_test[i//divnum], y_test[i//divnum], data_range=data_range, multichannel=multichannel)
-            # psnr_score = PSNR(x_test[i//divnum], y_test[i//divnum], data_range=data_range)
-            # pcc_score = PCC(x_test[i//divnum], y_test[i//divnum])
-            # ax.set_xlabel(label.format(ssim_score,psnr_score,pcc_score))
+            ssim_score = ssim(x_test[i//divnum], y_test[i//divnum], data_range=data_range, multichannel=multichannel)
+            psnr_score = PSNR(x_test[i//divnum], y_test[i//divnum], data_range=data_range)
+            pcc_score = PCC(x_test[i//divnum], y_test[i//divnum])
+            ax.set_xlabel(label.format(ssim_score,psnr_score,pcc_score))
             plt.imshow(x_test[i//divnum])
 
     plt.tight_layout()

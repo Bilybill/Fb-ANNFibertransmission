@@ -5,7 +5,7 @@ __C = edict()
 cfg = __C
 
 # 0. basic config
-__C.version_name = 'fft_with_fft_addsigmoid'
+__C.version_name = 'fft_lineartrans'
 __C.image_dim = 120 if __C.version_name != 'inverse_genspc' else 92
 __C.orig_dim = 92 if __C.version_name != 'inverse_genspc' else 120
 __C.lamb = 0.1
@@ -19,12 +19,12 @@ __C.MODEL.ischanged = True
 
 # general training and testing config
 __C.TRAIN = edict()
-__C.TRAIN.usefftdata = True
-__C.TRAIN.usegenerator = True
+__C.TRAIN.usefftdata = False
+__C.TRAIN.usegenerator = False
 __C.TRAIN.x_toload = 'Training/Speckle_images/ImageNet' if __C.version_name != 'inverse_genspc' else 'Training/Original_images/ImageNet'
 __C.TRAIN.y_toload = 'Training/Original_images/ImageNet' if __C.version_name != 'inverse_genspc' else 'Training/Speckle_images/ImageNet'
 __C.TRAIN.one_minimize = True if __C.version_name == 'inverse_genspc' else False
-__C.TRAIN.loadweights = True
+__C.TRAIN.loadweights = False
 # __C.TRAIN.load_path = '../result_dir/%s_resdir/checkpoint' % __C.version_name
 __C.TRAIN.load_path = '../result_dir/fft_with_fft_resdir/lastcheckpoint'
 
@@ -46,7 +46,7 @@ __C.TRAINRDN.load_checkpoint_path = '../result_dir/rdn_resdir/checkpoint'
 __C.TRAINRDN.load_weight = True
 
 __C.TESTRDN = edict()
-__C.TESTRDN.load_checkpoint_path = '../result_dir/rdn_resdir/singlecheckpoint_v2'
+__C.TESTRDN.load_checkpoint_path = '../result_dir/rdn_resdir/singlecheckpoint'
 __C.TESTRDN.show_rgb = False
 __C.TESTRDN.use_pre_model = True
 
@@ -58,7 +58,7 @@ __C.TEST.testclass = 'punch'
 __C.TEST.x_toload = 'Testing/Speckle_images/%s' % __C.TEST.testclass if __C.version_name != 'inverse_genspc' else 'Testing/Original_images/%s' % __C.TEST.testclass
 __C.TEST.y_toload = 'Testing/Original_images/%s' % __C.TEST.testclass if __C.version_name != 'inverse_genspc' else 'Testing/Speckle_images/%s' % __C.TEST.testclass
 __C.TEST.show_spc = True
-__C.TEST.show_rgb = True
+__C.TEST.show_rgb = False
 __C.TEST.fftdata_load = '../data/testfft_data.npy' if not __C.TESTALL else '../data/testallfft_data.npy'
 __C.TEST.testlist = ['Earth_B', 'Earth_G', 'Earth_R', 'Jupyter_B', 'Jupyter_G', 'Jupyter_R', 'cat', 'horse', 'parrot', 'punch']
 

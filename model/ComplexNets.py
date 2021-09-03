@@ -305,7 +305,7 @@ class ComplexDense(Layer):
     def __init__(self, output_dim,
                  activation=None,
                  use_bias=True,
-                 kernel_initializer='glorot_uniform',
+                 kernel_initializer='he_normal',
                  bias_initializer='zeros',
                  kernel_regularizer=None,
                  amplitude=False,

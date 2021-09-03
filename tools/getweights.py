@@ -23,29 +23,61 @@ def InvSigmoid(x):
     return np.log(x/(1-x))
 
 if __name__ == "__main__":
-    # model version 2
+    ## model version 2
     # model = getANNmodel()
     # model.load_weights(cfg.TRAIN.checkpoint_path)
     # weights = channels_to_complex_np(model.layers[1].get_weights()[0])
     # print("weights shape:",weights.shape)
     # weights = np.save('./tempdata/linearfftw',weights)
+    #%%
+    
+    fft_data = channels_to_complex_np(np.load(cfg.TEST.fftdata_load,allow_pickle=True).item()['punch'][0])
+    fft_data_amplitude = np.abs(fft_data).reshape(120,120)
+    
+    plt.imshow(np.fft.fftshift(np.log(fft_data_amplitude)),cmap='coolwarm')
+    plt.colorbar()
+    plt.axis('off')
+    plt.savefig(f'tempdata/fftamplitude.tif',bbox_inches='tight',pad_inches = 0)
+    plt.show()
+
+    
+    # plt.subplot(211)
+    # plt.title('Amplitude result of 2D FFT speckle')
+    # plt.axis('off')
 
     weights = np.load('./tempdata/linearfftw.npy')
-    w1 = np.abs(weights)
-    # w1.astype(np.float32).tofile('./tempdata/w1.bin')
+    recons_res = (2*Sigmoid(np.abs(fft_data @ weights))-1).reshape(92,92)
+    print(weights.dtype)
+    absweights = np.abs(weights)
+    sum_w = np.sum(absweights,axis=1).reshape(120,120)
+    # plt.subplot(212)
+
+    plt.imshow(np.fft.fftshift(sum_w),cmap='coolwarm')
+    plt.colorbar()
+    plt.axis('off')
+    plt.savefig(f'tempdata/fftresponse.tif',bbox_inches='tight',pad_inches = 0)
+    plt.show()
+
+    # print(sum_w.shape,f"data range:{np.min(sum_w)}--{np.max(sum_w)}")
+    plt.imshow(recons_res)
+    plt.axis('off')
+    plt.savefig(f'tempdata/recons.tif',bbox_inches='tight',pad_inches = 0)
+    plt.show()
+
+    # w1.astype(np.float32).tofile('./tempdata/linearfftw.bin')
     # print(w1.shape)
 
-    w2 = np.load('./tempdata/w.npy')
-    w2 = np.abs(w2)
+    # w2 = np.load('./tempdata/w.npy')
+    # w2 = np.abs(w2)
     # w2.astype(np.float32).tofile('./tempdata/w2.bin')
 
-    vmin = min(np.min(w1), np.min(w2))
-    vmax = max(np.max(w1), np.max(w2))
+    # vmin = min(np.min(w1), np.min(w2))
+    # vmax = max(np.max(w1), np.max(w2))
     # print(f'{vmin},{vmax}')
     # print(f"data range w1 {np.min(w1)},{np.max(w1)}")
     # print(f"data range w2 {np.min(w2)},{np.max(w2)}")
     # print(w1.shape,w2.shape)
-    norm = colors.Normalize(vmin=vmin, vmax=vmax)
+    # norm = colors.Normalize(vmin=vmin, vmax=vmax)
     # sns.kdeplot(w1.flatten(),label='our method')
     # sns.kdeplot(w2.flatten(),label='CP method')
     # plt.show()
@@ -54,20 +86,20 @@ if __name__ == "__main__":
 
     # # seaborn.heatmap(weights_abs,cmap='YlGnBu_r')
     # mpl.rcParams["axes.formatter.use_mathtext"]= True
-    from mpl_toolkits.axes_grid1.inset_locator import InsetPosition
+    # from mpl_toolkits.axes_grid1.inset_locator import InsetPosition
 
-    fig, (ax, ax2, cax) = plt.subplots(ncols=3,figsize=(7,6), 
-                  gridspec_kw={"width_ratios":[1,1, 0.05]})
-    fig.subplots_adjust(wspace=0.3)
-    ax0 =  ax.matshow(w1,cmap='OrRd',norm=norm)
-    ax.axis("off")
-    ax1 =  ax2.matshow(w2,cmap='OrRd',norm=norm)
-    ax2.axis('off')
-    ip = InsetPosition(ax2, [1.05,0,0.05,1]) 
-    cax.set_axes_locator(ip)
-    fig.colorbar(ax0, cax=cax)
-    plt.savefig(f'finalresfig/weight1.png',bbox_inches='tight',pad_inches = 0)
-    plt.show()
+    # fig, (ax, ax2, cax) = plt.subplots(ncols=3,figsize=(7,6), 
+    #               gridspec_kw={"width_ratios":[1,1, 0.05]})
+    # fig.subplots_adjust(wspace=0.3)
+    # ax0 =  ax.matshow(w1,cmap='OrRd',norm=norm)
+    # ax.axis("off")
+    # ax1 =  ax2.matshow(w2,cmap='OrRd',norm=norm)
+    # ax2.axis('off')
+    # ip = InsetPosition(ax2, [1.05,0,0.05,1]) 
+    # cax.set_axes_locator(ip)
+    # fig.colorbar(ax0, cax=cax)
+    # plt.savefig(f'finalresfig/weight1.png',bbox_inches='tight',pad_inches = 0)
+    # plt.show()
 
     # im  = ax.imshow(np.random.rand(11,8), vmin=0, vmax=1)
     # im2 = ax2.imshow(np.random.rand(11,8), vmin=0, vmax=1)

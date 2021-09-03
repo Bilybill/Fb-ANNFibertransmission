@@ -50,7 +50,7 @@ def getANNmodel(version = None):
     elif use_version == 'fft_lineartrans':
         l = Lambda(lambda x: 2*keras.activations.sigmoid(x)-1,name='output')(l)
         # l = Lambda(lambda x: 2*x-1,name='output')(l)
-    elif use_version == 'fft_with_fft' or use_version == 'fft_with_fft_addsigmoid':
+    elif use_version == 'fft_with_fft' or use_version == 'fft_with_fft_addsigmoid' or use_version == 'ori_model':
         pass
     else:
         raise ValueError("unkonwn type")

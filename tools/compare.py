@@ -8,7 +8,6 @@ import _init_path
 from train import load_dataset,create_logger,min_maxnormalize
 import os
 import logging
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 import numpy as np
 from keras.optimizers import SGD,Adam
 from keras.callbacks import ReduceLROnPlateau,ModelCheckpoint
@@ -32,6 +31,7 @@ def PCC(img1,img2):
     return PCC
 
 if __name__ == "__main__":
+    os.environ['CUDA_VISIBLE_DEVICES'] = '3'
     orig_dim = cfg.orig_dim
     image_dim = cfg.image_dim
 
@@ -88,46 +88,49 @@ if __name__ == "__main__":
 
     ##################          MODEL  
     # check checkpoint
-    model_ori = load_model(modelpath,custom_objects={'ComplexDense': ComplexDense,"Amplitude":Amplitude})
-    # model_fft = getANNmodel(version="fft")
+
+    # model_fft_linear = load_model(modelpath,custom_objects={'ComplexDense': ComplexDense,"Amplitude":Amplitude})
+    model_fft_with_fft = getANNmodel(version="fft_with_fft_addsigmoid")
     model_fft_sigmove = getANNmodel(version="fft_lineartrans")
     # model_fft.load_weights('../result_dir/fft_resdir/bestcheckpoint')
-    model_fft_sigmove.load_weights('../result_dir/fft_resdir/bestcheckpoint')
+    model_fft_sigmove.load_weights('../result_dir/fft_lineartrans_resdir/checkpoint')
+    model_fft_with_fft.load_weights('../result_dir/fft_with_fft_addsigmoid_resdir/checkpoint')
     # model_fft_sigmove.load_weights('../result_dir/fft_lineartrans_resdir/checkpoint')
 
-    model_ori.compile(optimizer=Adam(lr=cfg.TRAIN.lr), loss=cfg.TRAIN.loss)
+    # model_ori.compile(optimizer=Adam(lr=cfg.TRAIN.lr), loss=cfg.TRAIN.loss)
     model_fft_sigmove.compile(optimizer=Adam(lr=cfg.TRAIN.lr), loss=cfg.TRAIN.loss)
+    model_fft_with_fft.compile(optimizer=Adam(lr=cfg.TRAIN.lr), loss=cfg.TRAIN.loss)
 
-    ori_loss = model_ori.evaluate(x_test_ch,y_eval)
-    fft_sigmove_loss = model_fft_sigmove.evaluate(x_test_ch,y_eval)
+    fft_loss = model_fft_sigmove.evaluate(x_test_ch,y_eval)
+    fft_fft_loss = model_fft_with_fft.evaluate(x_test_ch,y_eval)
 
-    print("test fft_loss: {:.5f}".format(ori_loss))
-    print("test fft_linear_loss: {:.5f}".format(fft_sigmove_loss))
+    print("test fft_linear loss: {:.5f}".format(fft_loss))
+    print("test fft_with_fft loss: {:.5f}".format(fft_fft_loss))
 
-    pred_fft_test = model_ori.predict(x_test_ch)
     pred_fft_sigmove_test = model_fft_sigmove.predict(x_test_ch)
+    pred_fft_with_fft_test = model_fft_with_fft.predict(x_test_ch)
 
-    print("pred_test shape {}".format(pred_fft_test.shape))
+    print("pred_fft_with_fft shape {}".format(pred_fft_with_fft_test.shape))
 
-    pred_fft_test = pred_fft_test.reshape(pred_fft_test.shape[0], orig_dim, orig_dim)
     pred_fft_sigmove_test = pred_fft_sigmove_test.reshape(pred_fft_sigmove_test.shape[0], orig_dim, orig_dim)
+    pred_fft_with_fft_test = pred_fft_with_fft_test.reshape(pred_fft_with_fft_test.shape[0], orig_dim, orig_dim)
 
     
     if not cfg.TEST.show_rgb:
         y_test = y_test.reshape(y_test.shape[0],orig_dim,orig_dim)
     else:
-        r_pred = pred_test[0:len_div]
-        g_pred = pred_test[len_div:2*len_div]
-        b_pred = pred_test[2*len_div:3*len_div]
-        pred_test = np.concatenate([r_pred,g_pred,b_pred],axis=-1)
+        r_pred = pred_fft_sigmove_test[0:len_div]
+        g_pred = pred_fft_sigmove_test[len_div:2*len_div]
+        b_pred = pred_fft_sigmove_test[2*len_div:3*len_div]
+        pred_fft_sigmove_test = np.concatenate([r_pred,g_pred,b_pred],axis=-1)
     
-    # ("pred_test shape {} y_test shape {}".format(pred_test.shape,y_test.shape))
-    print("data range max pred: {} min pred: {} max y_test: {} min y_test: {} lineartrans min : {} lineartrans max: {}".format(np.max(pred_fft_test),np.min(pred_fft_test),np.max(y_test),np.min(y_test),np.min(pred_fft_sigmove_test),np.max(pred_fft_sigmove_test)))
+    # ("pred_fft_sigmove_test shape {} y_test shape {}".format(pred_fft_sigmove_test.shape,y_test.shape))
+    print("data range max pred: {} min pred: {} max y_test: {} min y_test: {} lineartrans min : {} lineartrans max: {}".format(np.max(pred_fft_with_fft_test),np.min(pred_fft_with_fft_test),np.max(y_test),np.min(y_test),np.min(pred_fft_sigmove_test),np.max(pred_fft_sigmove_test)))
     label = 'SSIM:{:.3f} PSNR:{:.3f} PCC:{:.3f}'
     shownum = 4
     # divnum = 2 if not cfg.TEST.compare else 3
     divnum = 3
-
+    label = 'SSIM:{:.3f} PSNR:{:.3f} PCC:{:.3f}'
     fig = plt.figure(1)
     fig.set_size_inches(20,6) 
     data_range = 1
@@ -136,44 +139,53 @@ if __name__ == "__main__":
         ax = plt.subplot(shownum,divnum,1+i)
         if i%divnum == 0:
             if i == 0:
-                ax.set_title("fft_predict image histogram")                
-            pred_img = pred_fft_test[i//divnum]
+                ax.set_title("Add ifft model") 
+            multichannel = False
+            if cfg.TESTRDN.show_rgb:
+                multichannel = True
+            ssim_score = ssim(pred_fft_with_fft_test[i//divnum], y_test[i//divnum], data_range=data_range, multichannel=multichannel)
+            psnr_score = PSNR(pred_fft_with_fft_test[i//divnum], y_test[i//divnum], data_range=data_range)
+            pcc_score = PCC(pred_fft_with_fft_test[i//divnum], y_test[i//divnum])
+            ax.set_xlabel(label.format(ssim_score,psnr_score,pcc_score))               
+            pred_img = pred_fft_with_fft_test[i//divnum]
             # pred_img = 2*pred_img-1
-            # plt.imshow(pred_img)
-            pred_img = (pred_img*255).astype(int)
-            arr = pred_img.flatten()
+            plt.imshow(pred_img)
+            # pred_img = (pred_img*255).astype(int)
+            # arr = pred_img.flatten()
             # pred_img = np.sqrt(1 - pred_img)
             # pred_img = (pred_img*256).astype(int)
             # arr = pred_img.flatten()
             # arr = np.sqrt(arr)
             # hist_gray = cv2.calcHist(images=[pred_img], channels=[0], mask=None, histSize=[256], ranges=[0, 256])
-            n, bins, patches = plt.hist(arr, bins=256,range=(0,256),  facecolor='green', alpha=0.75)  
-            # plt.imshow(pred_img,'gray')
+            # n, bins, patches = plt.hist(arr, bins=256,range=(0,256),  facecolor='green', alpha=0.75)  
+            plt.imshow(pred_img,'gray')
         
         elif i%divnum == 1:
             if i == 1:
-                ax.set_title("fft_linear_predict image histogram")
+                ax.set_title("Original model")
             # plt.imshow(y_test[i//divnum])
+            multichannel = False
+            if cfg.TESTRDN.show_rgb:
+                multichannel = True
+            ssim_score = ssim(pred_fft_sigmove_test[i//divnum], y_test[i//divnum], data_range=data_range, multichannel=multichannel)
+            psnr_score = PSNR(pred_fft_sigmove_test[i//divnum], y_test[i//divnum], data_range=data_range)
+            pcc_score = PCC(pred_fft_sigmove_test[i//divnum], y_test[i//divnum])
+            ax.set_xlabel(label.format(ssim_score,psnr_score,pcc_score))
             pred_img = pred_fft_sigmove_test[i//divnum]
-            # plt.imshow(pred_img)
-            pred_img = (pred_img*255).astype(int)
+            plt.imshow(pred_img)
+            # pred_img = (pred_img*255).astype(int)
             # plt.imshow(pred_img,'gray')
-            arr = pred_img.flatten()
+            # arr = pred_img.flatten()
             # # hist_gray = cv2.calcHist(images=[pred_img], channels=[0], mask=None, histSize=[256], ranges=[0, 256])
-            n, bins, patches = plt.hist(arr, bins=256,range=(0,256),  facecolor='red', alpha=0.75)  
+            # n, bins, patches = plt.hist(arr, bins=256,range=(0,256),  facecolor='red', alpha=0.75)  
 
         elif i%divnum == 2:
             if i == 2:
-                ax.set_title("label image histogram")
-            # plt.imshow(x_test_ch[i//divnum])
+                ax.set_title("label image")
             label_img = y_test[i//divnum]
-            # plt.imshow(label_img)
-            label_img = (label_img*255).astype(int)
-
-            # plt.imshow(label_img,'gray')
-            arr = label_img.flatten()
-            # # hist_gray = cv2.calcHist(images=[pred_img], channels=[0], mask=None, histSize=[256], ranges=[0, 256])
-            n, bins, patches = plt.hist(arr, bins=256,range=(0,256),  facecolor='red', alpha=0.75)  
-        
+            plt.imshow(label_img)
+            # label_img = (label_img*255).astype(int)
+            # arr = label_img.flatten()
+            # n, bins, patches = plt.hist(arr, bins=256,range=(0,256),  facecolor='red', alpha=0.75)          
     plt.tight_layout()
     plt.show()
