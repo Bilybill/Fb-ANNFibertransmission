@@ -1,3 +1,4 @@
+from pickle import load
 import h5py
 import _init_path
 from model.ANN import getANNmodel
@@ -14,6 +15,7 @@ import seaborn
 from matplotlib import colors
 import matplotlib as mpl
 import seaborn as sns
+from train import load_dataset
 
 def Sigmoid(x):
     return 1/(1+np.exp(-x))
@@ -24,45 +26,74 @@ def InvSigmoid(x):
 
 if __name__ == "__main__":
     ## model version 2
-    # model = getANNmodel()
+    # model = getANNmodel(version=)
     # model.load_weights(cfg.TRAIN.checkpoint_path)
+    # modelpath = "../result_dir/ori_modelsaved/orimodel.h5"
+    # model = load_model(modelpath,custom_objects={'ComplexDense': ComplexDense,"Amplitude":Amplitude})
     # weights = channels_to_complex_np(model.layers[1].get_weights()[0])
     # print("weights shape:",weights.shape)
-    # weights = np.save('./tempdata/linearfftw',weights)
+    # weights = np.save('./tempdata/orimodelweights',weights)
     #%%
     
-    fft_data = channels_to_complex_np(np.load(cfg.TEST.fftdata_load,allow_pickle=True).item()['punch'][0])
+    fft_data = channels_to_complex_np(np.load(cfg.TEST.fftdata_load,allow_pickle=True).item()['punch'][0]).reshape(120,120)
+    fft_data2 = channels_to_complex_np(np.load(cfg.TEST.fftdata_load,allow_pickle=True).item()['parrot'][0]).reshape(120,120)
+    # speckle_data = load_dataset(cfg.datafile_location,'Testing/Speckle_images/punch',spc=True)[0]
+    # speckle_data = np.abs(np.fft.ifft2(fft_data))
+    # plt.imshow(speckle_data)
+    # plt.axis('off')
+    # plt.savefig(f'tempdata/speckle_data2.png',bbox_inches='tight',pad_inches = 0)
+    # plt.show()
+    
     fft_data_amplitude = np.abs(fft_data).reshape(120,120)
+    fft_data_amplitude2 = np.abs(fft_data2).reshape(120,120)
+
+    plt.subplot(211)
     
     plt.imshow(np.fft.fftshift(np.log(fft_data_amplitude)),cmap='coolwarm')
     plt.colorbar()
     plt.axis('off')
-    plt.savefig(f'tempdata/fftamplitude.tif',bbox_inches='tight',pad_inches = 0)
+
+    plt.subplot(212)
+    plt.imshow(np.fft.fftshift(np.log(fft_data_amplitude2)),cmap='coolwarm')
+    plt.colorbar()
+    plt.axis('off')
+    # plt.savefig(f'tempdata/fftamplitude1.tif',bbox_inches='tight',pad_inches = 0)
+    # plt.show()
+    # plt.savefig(f'tempdata/fftamplitude1.tif',bbox_inches='tight',pad_inches = 0)
     plt.show()
+
+    # plt.imshow(np.fft.fftshift(np.log(fft_data_amplitude)),cmap='coolwarm')
+    # plt.colorbar()
+    # plt.axis('off')
+    # # plt.savefig(f'tempdata/fftamplitude1.tif',bbox_inches='tight',pad_inches = 0)
+    # plt.show()
 
     
     # plt.subplot(211)
     # plt.title('Amplitude result of 2D FFT speckle')
     # plt.axis('off')
 
-    weights = np.load('./tempdata/linearfftw.npy')
-    recons_res = (2*Sigmoid(np.abs(fft_data @ weights))-1).reshape(92,92)
-    print(weights.dtype)
-    absweights = np.abs(weights)
-    sum_w = np.sum(absweights,axis=1).reshape(120,120)
+    # weights = np.load('./tempdata/orimodelweights.npy')
+    # print(weights.dtype)
+    # recons_res = (2*Sigmoid(np.abs(fft_data @ weights))-1).reshape(92,92)
+    # print(weights.dtype)
+    # absweights = np.abs(weights)
+    # sum_w = np.sum(absweights,axis=1).reshape(120,120)
+    # sum_w = np.fft.fftshift(np.log(np.abs(np.fft.fft2(sum_w))))
     # plt.subplot(212)
 
-    plt.imshow(np.fft.fftshift(sum_w),cmap='coolwarm')
-    plt.colorbar()
-    plt.axis('off')
-    plt.savefig(f'tempdata/fftresponse.tif',bbox_inches='tight',pad_inches = 0)
-    plt.show()
+    # plt.imshow(np.fft.fftshift(sum_w),cmap='coolwarm')
+    # plt.imshow(sum_w,cmap='coolwarm')
+    # plt.colorbar()
+    # plt.axis('off')
+    # plt.savefig(f'tempdata/orimodelresponse.tif',bbox_inches='tight',pad_inches = 0)
+    # plt.show()
 
-    # print(sum_w.shape,f"data range:{np.min(sum_w)}--{np.max(sum_w)}")
-    plt.imshow(recons_res)
-    plt.axis('off')
-    plt.savefig(f'tempdata/recons.tif',bbox_inches='tight',pad_inches = 0)
-    plt.show()
+    # # print(sum_w.shape,f"data range:{np.min(sum_w)}--{np.max(sum_w)}")
+    # plt.imshow(recons_res)
+    # plt.axis('off')
+    # plt.savefig(f'tempdata/recons.tif',bbox_inches='tight',pad_inches = 0)
+    # plt.show()
 
     # w1.astype(np.float32).tofile('./tempdata/linearfftw.bin')
     # print(w1.shape)
